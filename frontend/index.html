@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Стартовый интерфейс домашней работы по HTTP и REST API"
+      content="Клиент учебного REST API: база учебных встреч с фильтрами, поиском и формой"
     />
-    <title>API-витрина</title>
+    <title>База учебных встреч</title>
     <link rel="stylesheet" href="./styles.css" />
     <script src="./script.js" defer></script>
   </head>
@@ -15,10 +15,11 @@
     <header class="page-header">
       <div class="page-header__content">
         <p class="page-header__eyebrow">ДЗ 6 · HTTP и API</p>
-        <h1 class="page-header__title">API-витрина</h1>
+        <h1 class="page-header__title">База учебных встреч</h1>
         <p class="page-header__lead">
-          Выберите тему, замените демонстрационный ресурс и свяжите этот интерфейс
-          с собственным REST API.
+          Лекции, практикумы и разборы в одном списке. Данные приходят из локального
+          REST API: можно найти встречу, отфильтровать её по направлению и формату,
+          добавить новую, изменить или удалить.
         </p>
       </div>
     </header>
@@ -28,7 +29,7 @@
         <div class="panel__header">
           <div>
             <p class="panel__eyebrow">Коллекция</p>
-            <h2 class="panel__title" id="collection-title">Объекты из API</h2>
+            <h2 class="panel__title" id="collection-title">Встречи</h2>
           </div>
 
           <button class="button button--secondary" type="button" data-action="reload">
@@ -38,22 +39,85 @@
 
         <p class="endpoint">
           Endpoint:
-          <code class="endpoint__value" data-ui="endpoint">http://localhost:3000/items</code>
+          <code class="endpoint__value" data-ui="endpoint"></code>
         </p>
 
+        <form class="filters" data-form="filters" role="search" aria-label="Поиск и фильтры">
+          <div class="field filters__field filters__field--wide">
+            <label class="field__label" for="filter-search">Поиск по названию</label>
+            <input
+              class="field__control"
+              id="filter-search"
+              name="search"
+              type="search"
+              maxlength="80"
+              autocomplete="off"
+              placeholder="Например, fetch"
+            />
+          </div>
+
+          <div class="field filters__field">
+            <label class="field__label" for="filter-topic">Направление</label>
+            <select class="field__control" id="filter-topic" name="topic" data-ui="topic-filter">
+              <option value="">Все направления</option>
+            </select>
+          </div>
+
+          <div class="field filters__field">
+            <label class="field__label" for="filter-format">Формат</label>
+            <select class="field__control" id="filter-format" name="format">
+              <option value="">Любой</option>
+              <option value="online">Онлайн</option>
+              <option value="offline">Очно</option>
+            </select>
+          </div>
+
+          <div class="field filters__field">
+            <label class="field__label" for="filter-sort">Сортировка</label>
+            <select class="field__control" id="filter-sort" name="sort">
+              <option value="startsAt">Сначала ранние</option>
+              <option value="-startsAt">Сначала поздние</option>
+              <option value="-capacity">Больше мест</option>
+              <option value="title">По названию</option>
+            </select>
+          </div>
+
+          <div class="filters__actions">
+            <button class="button button--ghost" type="reset">Сбросить</button>
+          </div>
+        </form>
+
         <div class="status" data-ui="status" role="status" aria-live="polite">
-          <strong class="status__title">Ожидание подключения</strong>
-          <span class="status__text">Реализуйте первый GET-запрос в script.js.</span>
+          <strong class="status__title" data-ui="status-title">Подготовка</strong>
+          <span class="status__text" data-ui="status-text">Сейчас загрузим встречи.</span>
+          <div class="status__actions">
+            <button
+              class="button button--secondary status__button"
+              type="button"
+              data-action="retry"
+              hidden
+            >
+              Повторить загрузку
+            </button>
+            <button
+              class="button button--secondary status__button"
+              type="button"
+              data-action="reset-filters"
+              hidden
+            >
+              Сбросить фильтры
+            </button>
+          </div>
         </div>
 
-        <div class="collection" data-ui="collection" aria-live="polite"></div>
+        <div class="collection" data-ui="collection"></div>
       </section>
 
       <section class="panel panel--form" aria-labelledby="form-title">
         <div class="panel__header">
           <div>
-            <p class="panel__eyebrow">Новая запись</p>
-            <h2 class="panel__title" id="form-title">Добавить объект</h2>
+            <p class="panel__eyebrow" data-ui="form-eyebrow">Новая запись</p>
+            <h2 class="panel__title" id="form-title" data-ui="form-title">Добавить встречу</h2>
           </div>
         </div>
 
@@ -65,20 +129,105 @@
               id="entry-title"
               name="title"
               type="text"
-              minlength="2"
-              placeholder="Замените подсказку под свою тему"
+              minlength="3"
+              maxlength="80"
+              pattern=".*\S.*\S.*\S.*"
+              title="Минимум три символа, не считая пробелов"
+              placeholder="Например, Асинхронность в JavaScript"
               required
             />
           </div>
 
-          <p class="entry-form__hint">
-            Добавьте остальные поля своей модели. Всего должно быть не меньше четырех
-            содержательных свойств помимо id.
-          </p>
+          <div class="field">
+            <label class="field__label" for="entry-topic">Направление</label>
+            <select class="field__control" id="entry-topic" name="topic" data-ui="topic-input" required>
+              <option value="">Выберите направление</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="entry-starts-at">Дата и время начала</label>
+            <input
+              class="field__control"
+              id="entry-starts-at"
+              name="startsAt"
+              type="datetime-local"
+              min="2020-01-01T00:00"
+              max="2035-12-31T23:59"
+              required
+            />
+          </div>
+
+          <div class="entry-form__row">
+            <div class="field">
+              <label class="field__label" for="entry-duration">Длительность, мин</label>
+              <input
+                class="field__control"
+                id="entry-duration"
+                name="durationMinutes"
+                type="number"
+                inputmode="numeric"
+                min="15"
+                max="480"
+                step="5"
+                placeholder="90"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="entry-capacity">Мест</label>
+              <input
+                class="field__control"
+                id="entry-capacity"
+                name="capacity"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                max="500"
+                step="1"
+                placeholder="20"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="entry-host">Ведущий</label>
+            <input
+              class="field__control"
+              id="entry-host"
+              name="host"
+              type="text"
+              minlength="2"
+              maxlength="60"
+              pattern=".*\S.*\S.*"
+              title="Минимум два символа, не считая пробелов"
+              autocomplete="name"
+              placeholder="Имя и фамилия"
+              required
+            />
+          </div>
+
+          <div class="field field--checkbox">
+            <input
+              class="field__checkbox"
+              id="entry-online"
+              name="isOnline"
+              type="checkbox"
+              value="true"
+            />
+            <label class="field__label" for="entry-online">Онлайн-встреча</label>
+          </div>
+
+          <p class="form-status" data-ui="form-status" role="status" aria-live="polite"></p>
 
           <div class="entry-form__actions">
+            <button class="button button--ghost" type="button" data-action="cancel-edit" hidden>
+              Отменить
+            </button>
             <button class="button button--primary" type="submit" data-action="submit">
-              Отправить в API
+              Добавить встречу
             </button>
           </div>
         </form>
@@ -87,9 +236,8 @@
 
     <footer class="page-footer">
       <p class="page-footer__text">
-        Источник результата — ответы API. Не дублируйте содержимое db.json в JavaScript.
+        Источник данных — ответы API. Локальный сервер: json-server, файл backend/db.json.
       </p>
     </footer>
   </body>
 </html>
-
