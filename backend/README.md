@@ -1,21 +1,28 @@
 # Backend
 
-Здесь находится локальный REST API на `json-server`.
+Локальный REST API на `json-server`. Данные хранятся в `db.json`.
 
 ## Запуск
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-После запуска демонстрационный ресурс доступен по адресу:
+Ресурс доступен по адресу:
 
 ```text
-http://localhost:3000/items
+http://localhost:3000/meetups
 ```
 
-В готовой работе замените `items` собственным осмысленным ресурсом, добавьте минимум три стартовые записи и обновите URL в документации и frontend.
+## Примеры запросов
 
-`db.json` изменяется после успешных запросов `POST`, `PATCH` и `DELETE`. Перед экспериментами с дополнительной частью полезно сделать коммит с рабочими данными.
+```text
+GET /meetups
+GET /meetups/1
+GET /meetups?topic=frontend
+GET /meetups?isOnline=true&_sort=-startsAt
+GET /meetups?title:contains=fetch
+```
 
+`db.json` изменяется после успешных запросов `POST`, `PATCH` и `DELETE`.

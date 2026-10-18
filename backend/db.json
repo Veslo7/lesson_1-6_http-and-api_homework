@@ -1,12 +1,45 @@
 {
-  "items": [
+  "meetups": [
     {
-      "id": "starter-1",
-      "title": "Замените демонстрационную запись",
-      "category": "starter",
-      "value": 0,
-      "isActive": true
+      "id": "1",
+      "title": "Fetch API без магии",
+      "topic": "frontend",
+      "startsAt": "2026-10-22T18:30",
+      "durationMinutes": 90,
+      "capacity": 24,
+      "isOnline": true,
+      "host": "Анна Ковалёва"
+    },
+    {
+      "id": "2",
+      "title": "REST: ресурсы, методы и статусы",
+      "topic": "backend",
+      "startsAt": "2026-10-25T12:00",
+      "durationMinutes": 120,
+      "capacity": 16,
+      "isOnline": false,
+      "host": "Игорь Белов"
+    },
+    {
+      "id": "3",
+      "title": "Доступные формы: label, ошибки, фокус",
+      "topic": "design",
+      "startsAt": "2026-11-01T17:00",
+      "durationMinutes": 60,
+      "capacity": 30,
+      "isOnline": true,
+      "host": "Мария Сафонова"
+    },
+    {
+      "title": "Синк IT команды",
+      "topic": "career",
+      "startsAt": "2026-10-17T16:10",
+      "durationMinutes": 120,
+      "capacity": 14,
+      "host": "Дмитрий Орлов",
+      "isOnline": true,
+      "id": "UfVPtB56HMw"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
-
